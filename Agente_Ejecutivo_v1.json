@@ -1,0 +1,993 @@
+{
+  "name": "Agente Ejecutivo v1",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "50d269d2-02cd-4bc9-b137-c3b9d38e6d15",
+      "name": "Telegram Trigger1",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -200,
+        960
+      ],
+      "webhookId": "25e4816b-f8eb-4586-93e1-2fc3b06b4ea2",
+      "credentials": {
+        "telegramApi": {
+          "id": "QXyzXdiI7exWnZkc",
+          "name": "Telegram_Seminario_DIA2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "if ($input.first().json.message.from.id !== 5977524193) { // Pon el ID de tu chat de telegram\n  return {unauthorized: true};\n} else {\n  // Return the original data when authorized\n  return $input.all();\n}\n "
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        960
+      ],
+      "id": "b6f086c7-e616-4780-b1f8-c09766ff609e",
+      "name": "Code8"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Merge').item.json.session_id }}",
+        "text": "=Lo siento, he perdido la conexión. ¿Puedes repetirme la tarea por favor?",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1640,
+        820
+      ],
+      "id": "3ba51f3f-b65b-4e23-9b30-d25a24f29810",
+      "name": "Telegram3",
+      "webhookId": "3ff350d4-403f-4276-8244-f377c4c4db85",
+      "credentials": {
+        "telegramApi": {
+          "id": "QXyzXdiI7exWnZkc",
+          "name": "Telegram_Seminario_DIA2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98bca5d4-c439-4e48-bf8d-bd521ac1ddbb",
+              "name": "platform",
+              "value": "={{ $json.platform }}",
+              "type": "string"
+            },
+            {
+              "id": "aa6f59a5-09bc-4661-9795-edc62f9292ee",
+              "name": "session_id",
+              "value": "={{ $json.session_id }}",
+              "type": "string"
+            },
+            {
+              "id": "d68137a5-f101-4838-9f8f-3074d82a7152",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1100,
+        1000
+      ],
+      "id": "fe561ecc-003a-435a-b2c7-f25473a5568b",
+      "name": "set_final"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "text": "=Dame un minuto por favor...",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "4897cd98-7143-4a9d-bf4a-d9c14cf70a6b",
+      "name": "Procesando6",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        840,
+        820
+      ],
+      "webhookId": "a4c612bd-7431-4b14-8c16-cbfbaf159ed9",
+      "credentials": {
+        "telegramApi": {
+          "id": "QXyzXdiI7exWnZkc",
+          "name": "Telegram_Seminario_DIA2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Merge').item.json.session_id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2100,
+        880
+      ],
+      "id": "e2e08d01-0671-41ad-a2ee-c134df80d960",
+      "name": "Telegram",
+      "webhookId": "732da978-a8f5-44f6-90db-852138fe9e1a",
+      "credentials": {
+        "telegramApi": {
+          "id": "QXyzXdiI7exWnZkc",
+          "name": "Telegram_Seminario_DIA2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('set_final').item.json.platform }}",
+                    "rightValue": "telegram",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Telegram"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "cb06ff29-e909-4f75-86a9-f526a56dd7c8",
+                    "leftValue": "={{ $('set_final').item.json.platform }}",
+                    "rightValue": "whatsapp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "whatsapp"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e3c6c553-cba9-45e5-91fa-651f6e08bf35",
+                    "leftValue": "={{ $('set_final').item.json.platform }}",
+                    "rightValue": "webhook",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "webhook"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1820,
+        1000
+      ],
+      "id": "2d3aa93c-f92a-4dc1-ac5c-07ce6dd859a8",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=Eres Dan, un Agente Ejecutivo altamente eficiente, diseñado para asistir Daniel Santos en su día a día.\nTienes acceso a herramientas clave que te permiten actuar con precisión, rapidez y profesionalismo.\n\n🔧 Herramientas Disponibles\nserpapi – Úsala para buscar información actualizada y relevante en internet.\n\nemailTool – Utilízala para redactar, enviar, responder, organizar y buscar correos electrónicos. Si el usuario no te proporciona un email directamente, busca el email por el nombre y apellidos en la herramienta contact_tool. Si el usuario no te proporciona ni nombre ni email, preguntaselo.\n\ncalendarTool – Gestiona eventos, reuniones, meets y recordatorios en el calendario del usuario. Si el usuario te pide añadir asistentes, encuentra sus emails en contact_tool (si no te los proporciona directamente) y mándaselos a esta herramienta junto con la acción a realizar y las fechas concretas.\n\ncontact_tool – Utilízala para consultar teléfonos o correos electrónicos de contactos existentes. \n\ncontact_tool_update – Utilízala para crear o modificar contactos. Puedes introducir o actualizar los siguientes datos:\n\nNombre y Apellidos\n\nApodo\n\nPrefijo Telefónico del País (ejemplo: +34 o 34)\n\nTeléfono (sin prefijo)\n\nEmail\n\nEmpresa\n\nObservaciones\n\n📌 Instrucciones Clave\nCorreos Electrónicos:\n\nSi el usuario quiere enviar un correo a alguien, extrae el contenido del mensaje y la dirección de correo electrónico (si la proporciona) y si no proporciona la dirección de correo electrónico (email) buscalo en la herramienta contact_tool.\n\nUsa la herramienta emailTool para enviarlo.\n\nSi la herramienta calendarTool genera un enlace de Google Meet, inclúyelo siempre en el correo.\n\nSi el usuario no proporciona el email, pregúntale educadamente o utiliza contact_tool para buscarlo.\n\nCuando envíes un correo, responde siempre al usuario incluyendo una copia completa del mensaje enviado.\nAdemás, incluye los destinatarios y la fecha exacta del envío.\n\nConfirma siempre con el usuario antes de enviar correos importantes.\n\nGestión de Calendario:\n\nSi el usuario pide agendar, mover, cancelar o consultar un evento, usa calendarTool.\n\nSi la reunión es con varias personas, crea solo un evento con todos los invitados incluidos.\n\nLa duración predeterminada para un evento es una hora, salvo que el usuario indique otra cosa.\n\nInvestigación en Internet:\n\nSi el usuario te pide buscar noticias, datos o información actualizada, usa serpapi y entrega los resultados más relevantes y actuales.\n\nContactos:\n\nPara revisar el teléfono o correo de un contacto, usa contact_tool.\n\nPara añadir o modificar un contacto, usa contact_tool_update e incluye los campos necesarios de:\n\nNombre y Apellidos, Apodo, Prefijo, Teléfono, Email, Empresa y Observaciones.\n\n✅ Comportamiento Esperado\nSé claro, profesional y proactivo.\n\nAnticipa necesidades del usuario y ofrece apoyo adicional cuando sea útil.\n\nSiempre confirma acciones importantes antes de ejecutarlas.\n\nCuando envíes un correo, incluye en tu respuesta al usuario:\n\nUna copia del mensaje enviado\n\nLos destinatarios\n\nLa fecha exacta del envío\n\nLa fecha y hora actual es: {{ $now }}\n\n\n\n"
+        }
+      },
+      "id": "fc3fe575-c777-4196-ae11-da21997358df",
+      "name": "Dan Conversor de Leads",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1320,
+        1000
+      ],
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        900,
+        1000
+      ],
+      "id": "1960852a-a517-4f78-b78f-62646f77793e",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98bca5d4-c439-4e48-bf8d-bd521ac1ddbb",
+              "name": "platform",
+              "value": "telegram",
+              "type": "string"
+            },
+            {
+              "id": "aa6f59a5-09bc-4661-9795-edc62f9292ee",
+              "name": "session_id",
+              "value": "={{ $('Switch').item.json.message.chat.id }}",
+              "type": "string"
+            },
+            {
+              "id": "d68137a5-f101-4838-9f8f-3074d82a7152",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        980
+      ],
+      "id": "becdc94b-59d9-4af9-a217-58edd15a141c",
+      "name": "Set Telegram"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "19b9ae15-287b-44e9-be1c-46b272166647",
+      "name": "Speech to Text",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        460,
+        800
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "openAiApi": {
+          "id": "PY6FwAe6aExivFsf",
+          "name": "OpenAi_Seminario_DIA2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "78036c48-1c14-41ac-8b33-3e04f140acef",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fe8653ed-21e8-43b1-9bab-21f6de5dc2c8",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        120,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f8e61829-2793-479d-a33f-615b5abe79bf",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0b800344-c09f-4555-ad2f-772af6fe0a00",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        980
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "id": "062f4699-1489-4738-b1ff-41af106fb42c",
+      "name": "Get Voice File",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        260,
+        800
+      ],
+      "typeVersion": 1.1,
+      "webhookId": "3d786fe0-6b99-42da-92bb-30b78785a284",
+      "credentials": {
+        "telegramApi": {
+          "id": "QXyzXdiI7exWnZkc",
+          "name": "Telegram_Seminario_DIA2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        1260
+      ],
+      "id": "64669990-345c-4f0b-8f13-50e6c87e8e72",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "PY6FwAe6aExivFsf",
+          "name": "OpenAi_Seminario_DIA2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        2260,
+        1360
+      ],
+      "id": "1e4ece45-f864-4702-a8ba-87e957fd6898",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "nVfHApX2oD8P3R36",
+          "name": "SerpAPI_SEMINARIODIA2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "emailAgent",
+        "description": "llama a esta herramienta para cualquier interacción con el Email. Manda el Email que debe usar el agente.",
+        "workflowId": {
+          "__rl": true,
+          "value": "boW98sMjS7r85mER",
+          "mode": "list",
+          "cachedResultName": "Experimentos — _emailAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email', ``, 'string') }}",
+            "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('text', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        1300
+      ],
+      "id": "65d99cdb-512b-4608-b82c-5590b81be513",
+      "name": "Email Agent"
+    },
+    {
+      "parameters": {
+        "name": "calendarAgent",
+        "description": "Llama a esta herramienta para cualquier interacción con el calendario. Siempre enviar",
+        "workflowId": {
+          "__rl": true,
+          "value": "jAB6HYMusSAPD2LA",
+          "mode": "list",
+          "cachedResultName": "Experimentos — _calendarAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1640,
+        1360
+      ],
+      "id": "81ea2cc2-30a4-4e4c-a437-9f067f29fd6d",
+      "name": "Calendar Agent"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1GZoBe-KNfE1AFue8FPTMVi2loN3eECHr96MiPGlA4wg",
+          "mode": "list",
+          "cachedResultName": "contactos_template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GZoBe-KNfE1AFue8FPTMVi2loN3eECHr96MiPGlA4wg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 366369217,
+          "mode": "list",
+          "cachedResultName": "Contactos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GZoBe-KNfE1AFue8FPTMVi2loN3eECHr96MiPGlA4wg/edit#gid=366369217"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        1820,
+        1360
+      ],
+      "id": "50eeaea1-af88-459e-a5c4-089a12e301a8",
+      "name": "contact_tool",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DQe6ZxdyfpWEg95z",
+          "name": "Google Sheets_SeminarioDIA2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Eres una herramienta encargada de crear contactos en google sheet. Necesitas minimo nombre, telefono. eemail.",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1GZoBe-KNfE1AFue8FPTMVi2loN3eECHr96MiPGlA4wg",
+          "mode": "list",
+          "cachedResultName": "contactos_template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GZoBe-KNfE1AFue8FPTMVi2loN3eECHr96MiPGlA4wg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 366369217,
+          "mode": "list",
+          "cachedResultName": "Contactos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GZoBe-KNfE1AFue8FPTMVi2loN3eECHr96MiPGlA4wg/edit#gid=366369217"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre  Apellidos": "={{ $fromAI(\"nombre\",\"el nombre y apellidos del usuario\") }}",
+            "Teléfono": "={{ $fromAI(\"telefono\",\"el telefono del usuario sin prefijo\") }}",
+            "Mail": "={{ $fromAI(\"mail\",\"el email del ususuario\") }}",
+            "Apodo": "={{ $fromAI(\"apodo\",\"el apodo del usuario\") }}",
+            "prefijo": "={{ $fromAI(\"prefijo\",\"ejemplo: +34 o 34\") }}",
+            "Observaciones": "={{ $fromAI(\"observaciones\",\"observaciones del usuario\") }}",
+            "Empresa": "={{ $fromAI(\"empresa\",\"empresa del usuario\") }}"
+          },
+          "matchingColumns": [
+            "Nombre  Apellidos"
+          ],
+          "schema": [
+            {
+              "id": "Nombre  Apellidos",
+              "displayName": "Nombre  Apellidos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Apodo",
+              "displayName": "Apodo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "prefijo",
+              "displayName": "prefijo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Teléfono",
+              "displayName": "Teléfono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mail",
+              "displayName": "Mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Observaciones",
+              "displayName": "Observaciones",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        1980,
+        1360
+      ],
+      "id": "aeaa5799-e96c-4ede-b7dd-728fb7ddfa6b",
+      "name": "contact_tool_update",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DQe6ZxdyfpWEg95z",
+          "name": "Google Sheets_SeminarioDIA2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        1360
+      ],
+      "id": "536ca8b0-678e-4868-852a-4cb212d04c59",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('set_final').item.json.session_id }}",
+        "contextWindowLength": 2
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1320,
+        1260
+      ],
+      "id": "20cedd96-0f63-4531-88be-ff8d31ff38ad",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Code8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code8": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set_final": {
+      "main": [
+        [
+          {
+            "node": "Dan Conversor de Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Dan Conversor de Leads": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "set_final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Telegram": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Procesando6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Speech to Text": {
+      "main": [
+        [
+          {
+            "node": "Set Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get Voice File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Set Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Voice File": {
+      "main": [
+        [
+          {
+            "node": "Speech to Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Dan Conversor de Leads",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Dan Conversor de Leads",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Dan Conversor de Leads",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contact_tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Dan Conversor de Leads",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contact_tool_update": {
+      "ai_tool": [
+        [
+          {
+            "node": "Dan Conversor de Leads",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Dan Conversor de Leads",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "Dan Conversor de Leads",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Dan Conversor de Leads",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Europe/Lisbon"
+  },
+  "versionId": "34949dc9-f598-4980-a1f4-9941b5fa0236",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0ddb2da4fe7b159278d19c08d109e9f684ea70da1a3d8d7d0a9a40864420274d"
+  },
+  "id": "Y8iiLn9oX2seFpn2",
+  "tags": [
+    {
+      "createdAt": "2025-03-20T17:56:40.015Z",
+      "updatedAt": "2025-03-20T17:56:40.015Z",
+      "id": "s3yjOcV58byjn1gd",
+      "name": "Asistente Ejecutivo"
+    }
+  ]
+}
